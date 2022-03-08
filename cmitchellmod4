@@ -1,0 +1,186 @@
+package cmitchellmod4;
+
+import java.text.NumberFormat;
+import java.util.Scanner;
+
+public class EatEm {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		NumberFormat nf = NumberFormat.getCurrencyInstance();
+
+		String choice = "";
+		int keepBuying = 1;
+
+		// while more purchases requested
+		while (keepBuying == 1) {
+
+			boolean validChoice = false;
+
+			// begin valid choice loop
+			while (validChoice == false) {
+				System.out.println(
+						"Which type of edible insect would you like? Cricket (CR), Mealy Worm (MW), Locust (LO), Cicada (CI), or Silk Worm (SW)");
+				System.out.println("Please type in the two letter code");
+				choice = scan.nextLine();
+
+				validChoice = valid(choice);
+
+			} // end of valid choice loop
+
+			//tell the customer what the cost will be for their selection
+			int cost = cost(choice);
+			System.out.println("The cost is " + cost + " yen");
+			
+						
+			// call the payBill method to keep track of the purchase
+			payBill(cost);
+
+			// now print out the conversion to US dollars
+			double usCurrency = convert(cost);
+			System.out.println("In American money, the snack would cost " + nf.format(usCurrency));
+
+			//ask if the customer wants to purchase anything else
+			System.out.println("More yummy insects? (yes or no)");
+			String more = scan.nextLine();
+			if (more.equals("yes")) {
+				validChoice = false;
+			} else {
+				keepBuying = 0;
+			}
+
+		}
+		// end of while more purchases requested
+		// System.out.println("Your change is " + change + ". Here is your snack.");
+
+	} // end of main
+
+	//determine if the user;s choice of bug is a valid entry
+	public static boolean valid(String twoLetter) {
+		if (twoLetter.equals("CR") | twoLetter.equals("MW") | twoLetter.equals("LO") | twoLetter.equals("CI")
+				| twoLetter.equals("SW")) {
+			return true;
+		} else {
+			System.out.println("That is not a valid code");
+			return false;
+		}
+
+	}
+
+	//published price index
+	public static int cost(String code) {
+		int cost;
+		if (code.equals("CR")) {
+			cost = 1480;
+		} else if (code.equals("MW")) {
+			cost = 1580;
+		} else if (code.equals("LO")) {
+			cost = 1680;
+		} else if (code.equals("CI")) {
+			cost = 1380;
+		} else
+			cost = 1480;
+		return cost;
+
+	}
+
+	//determine change by coin denomination
+	public static void coinsBack(int amount) {
+		System.out.println("Your change is " + (-1 * amount) + ". Here is your snack.");
+		
+		System.out.println("Here are your coins back");
+		
+		int coinOne = 500;
+		int coinTwo = 100;
+		int coinThree = 50;
+		int coinFour = 10;
+		
+		int changeDue = amount;
+		int modCoinOne = changeDue%coinOne;
+		int modCoinTwo = modCoinOne%coinTwo;
+		int modCoinThree = modCoinTwo%coinThree;
+		int modCoinFour = modCoinThree%coinFour;
+		
+		int numCoinOne = (changeDue-modCoinOne) / (-1*coinOne);
+		int numCoinTwo = (modCoinOne-modCoinTwo) / (-1*coinTwo);
+		int numCoinThree = (modCoinTwo-modCoinThree) / (-1*coinThree);
+		int numCoinFour = (modCoinThree-modCoinFour) / (-1*coinFour);
+		
+		//tell the customer what coins and counts they will receive
+		System.out.print("Your change is ");
+		
+		if (numCoinOne > 0) 
+			System.out.print(numCoinOne + "x 500Y ");
+		
+		if (numCoinTwo > 0) 
+			System.out.print(numCoinTwo + "x 100Y ");
+		
+		if (numCoinThree > 0) 
+			System.out.print(numCoinThree + "x 50Y ");
+		
+		if (numCoinFour > 0) 
+			System.out.print(numCoinFour + "x 10Y ");
+		
+		System.out.println();
+	}
+
+	public static void payBill(int cost) {
+		int owed = cost; //amt owed to machine
+		int paid = 0; // amt paid so far
+		int changeDue =0; //change owed to customer
+		
+		while (owed > paid) {
+			
+			System.out.println("Deposit a coin - either 10, 50, 100, or 500 yen");
+			
+			int credit = validCoin();
+			paid = paid + credit;
+			int remainder = cost - paid;
+				if (remainder < 0) {
+					coinsBack(remainder);
+				}
+				else {
+					System.out.println("The remaining cost is " + remainder);
+				}
+			changeDue = remainder;
+		}
+
+		if (changeDue > 0) 
+			coinsBack(changeDue);
+		
+		else if (changeDue == 0)
+			System.out.println("Exact coins provided. No change due.");
+					
+		}
+
+	
+
+	public static int validCoin() {
+		Scanner scan = new Scanner(System.in);
+		boolean validCoin = true;
+		int coin=0;
+		int deposit=0;
+
+		//while (validCoin == true) {
+			System.out.println("Which value of coin?");
+			coin = scan.nextInt();
+
+				if (coin == 10 | coin == 50 | coin == 100 | coin == 500) {
+					validCoin = false;
+					deposit = deposit + coin;
+				}
+	
+				else {
+				System.out.println("Not a valid coin");
+				validCoin = false;
+				}
+		return deposit; 
+		}
+
+
+	public static double convert(int cost) {
+		double usDollars = cost / (11100/100.00);
+		return usDollars;
+	}
+
+}
